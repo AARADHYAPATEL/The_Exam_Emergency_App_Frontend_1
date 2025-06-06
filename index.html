@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>🚨 Emergency Alert Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    let buzzer;
+
+    async function loadAlerts() {
+      try {
+        const response = await fetch('http://localhost:3000/alerts');
+        const alerts = await response.json();
+        const alertBox = document.getElementById("alerts");
+        alertBox.innerHTML = ""; // Clear existing alerts
+
+        if (alerts.length > 0) {
+          document.getElementById("status").innerText = "🚨 EMERGENCY ALERTS RECEIVED!";
+
+          alerts.forEach((alert, index) => {
+            const alertDiv = document.createElement("div");
+            alertDiv.innerHTML = `
+              🔴 <b>Room</b>: ${alert.room} | <b>Teacher</b>: ${alert.teacher} at ${alert.time}<br>
+              👉 <i>Reason</i>: ${alert.reason}<br>
+              <button onclick="dismissAlert(${index})">Dismiss</button>
+              <hr>
+            `;
+            alertBox.appendChild(alertDiv);
+          });
+
+          if (!buzzer) {
+            buzzer = new Audio("buzzer.mp3");
+          }
+          // Play buzzer and catch any autoplay errors
+          buzzer.play().catch(err => {
+            console.log("Autoplay blocked. Click anywhere to allow sound.");
+          });
+
+        } else {
+          document.getElementById("status").innerText = "✅ No current alerts.";
+          if (buzzer) {
+            buzzer.pause();
+            buzzer.currentTime = 0;
+          }
+        }
+      } catch (error) {
+        document.getElementById("status").innerText = "❌ Failed to load alerts.";
+        console.error(error);
+      }
+    }
+
+    async function dismissAlert(index) {
+      try {
+        const response = await fetch('http://localhost:3000/alerts');
+        let alerts = await response.json();
+        alerts.splice(index, 1);
+
+        await fetch('http://localhost:3000/alerts', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(alerts)
+        });
+
+        // Refresh alerts list without reloading page
+        loadAlerts();
+      } catch (error) {
+        alert("Failed to dismiss alert.");
+        console.error(error);
+      }
+    }
+
+    // Initial load
+    window.onload = () => {
+      loadAlerts();
+      // Refresh every 5 seconds
+      setInterval(loadAlerts, 5000);
+    };
+  </script>
+</head>
+<body>
+  <h1>🛑 Emergency Alert Dashboard</h1>
+  <h2 id="status"></h2>
+  <div id="alerts"></div>
+</body>
+</html>
