@@ -9,7 +9,7 @@
 
     async function loadAlerts() {
       try {
-        const response = await fetch('http://localhost:3000/alerts');
+        const response = await fetch('https://the-exam-emergency-app-backend.onrender.com');
         const alerts = await response.json();
         const alertBox = document.getElementById("alerts");
         alertBox.innerHTML = ""; // Clear existing alerts
@@ -51,11 +51,11 @@
 
     async function dismissAlert(index) {
       try {
-        const response = await fetch('http://localhost:3000/alerts');
+        const response = await fetch('https://the-exam-emergency-app-backend.onrender.com');
         let alerts = await response.json();
         alerts.splice(index, 1);
 
-        await fetch('http://localhost:3000/alerts', {
+        await fetch('https://the-exam-emergency-app-backend.onrender.com', {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
