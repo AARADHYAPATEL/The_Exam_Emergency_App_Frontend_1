@@ -85,9 +85,17 @@
 
     // Initial load
     window.onload = () => {
-      loadAlerts();
-      // Refresh every 5 seconds
-      setInterval(loadAlerts, 5000);
+      const socket = io("https://the-exam-emergency-app-backend.onrender.com");
+
+      socket.on('connect', () => {
+        console.log("Connected to WebSocket server");
+      });
+
+      // When a new alert is received
+      socket.on('new-alert', (alert) => {
+        console.log("Received new alert:", alert);
+      loadAlerts(); // reload the alerts
+      });
     };
   </script>
 </head>
