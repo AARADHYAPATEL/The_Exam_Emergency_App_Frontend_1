@@ -40,6 +40,14 @@
             console.log("Autoplay blocked. Click anywhere to allow sound.");
           });
 
+          if (alerts.length > 0) {
+            const latestBuzzer = alerts[alerts.length - 1].buzzerSound || "default_buzzer.mp3";
+            buzzer = new Audio(latestBuzzer);
+            buzzer.play().catch(err => {
+              console.log("Autoplay blocked. Click anywhere to allow sound.");
+            });
+          }
+
         } else {
           document.getElementById("status").innerText = "✅ No current alerts.";
           if (buzzer) {
