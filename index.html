@@ -19,8 +19,12 @@
 
           alerts.forEach((alert, index) => {
             const alertDiv = document.createElement("div");
+            alertDiv.style.borderLeft = `10px solid ${alert.urgencyColor}`;
+            alertDiv.style.paddingLeft = "10px";
+            alertDiv.style.marginBottom = "10px";
             alertDiv.innerHTML = `
               🔴 <b>Room</b>: ${alert.room} | <b>Teacher</b>: ${alert.teacher} at ${alert.time}<br>
+              🧑‍🏫 <b>Position</b>: ${alert.position}<br>
               👉 <i>Reason</i>: ${alert.reason}<br>
               <button onclick="dismissAlert(${index})">Dismiss</button>
               <hr>
